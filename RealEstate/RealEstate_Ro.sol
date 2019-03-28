@@ -17,8 +17,9 @@ contract RealEstate_RO{
     mapping (uint => RoDetails) roMapping;
     address public builderAddress;
   uint256 arraylocation=0;
+  bytes32[] allData;
     
-    function registerPropertiesByBuilderToRO(uint256 builderID, uint256  buyerID, uint256 flatID, string memory  approvalStatus, uint256  propertyID, string memory  Remark, string memory  OwnerName) public returns(bytes32 resp) {
+    function registerPropertiesByBuilderToRO(uint256 builderID, uint256  buyerID, uint256 flatID, string memory  approvalStatus, uint256  propertyID, string memory  Remark, string memory  OwnerName) public returns(string memory resp) {
     
     require(builderAddress != msg.sender,"Can't be Builder and Ro can't be same");
         
@@ -35,7 +36,33 @@ contract RealEstate_RO{
     arraylocation=arraylocation+1;
     
     
-        return ("its done with tracking iD ");
+        return ("Prperty Register");
     }
+    
+    
+    function getRegisterPropertyByBuilderToRO(uint8 indexnu) view public returns  (uint256,uint256,uint256,string memory ,uint256,string memory ,string memory)
+    {
+        return (roMapping[indexnu].builderID,roMapping[indexnu].buyerID,roMapping[indexnu].flatID,roMapping[indexnu].approvalStatus,roMapping[indexnu].propertyID,roMapping[indexnu].Remark,roMapping[indexnu].OwnerName);
+    }
+    
+    function getAllRegisterProperty() view public returns (bytes32[] memory )
+    {
+                uint8 x = 0;
+bytes32[] memory datanew = new bytes32[]();
+        while(x < roMapping.length)
+        {
+            datanew[x].builderID = roMapping[x].builderID;
+             datanew[x].buyerID = roMapping[x].buyerID;
+             datanew[x].flatID = roMapping[x].flatID;
+             datanew[x].approvalStatus = roMapping[x].approvalStatus;
+             datanew[x].propertyID = roMapping[x].propertyID;
+             datanew[x].Remark = roMapping[x].Remark;
+             datanew[x].OwnerName = roMapping[x].OwnerName;
+            x++;
+        }
+        
+        return datanew;
+    }
+    
 }
 
