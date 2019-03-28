@@ -6,19 +6,19 @@ contract RealEstate_RO{
           uint256 builderID;
           uint256 buyerID;
           uint256  flatID;
-          bytes32  approvalStatus;
+    string  approvalStatus;
           uint256  propertyID;
-          bytes32  Remark;
-          bytes32 OwnerName;
+          string  Remark;
+          string OwnerName;
           
           
         
     }
     mapping (uint => RoDetails) roMapping;
     address public builderAddress;
-  
+  uint256 arraylocation=0;
     
-    function registerPropertiesByBuilderToRO(uint256 builderID, uint256  buyerID, uint256 flatID, bytes32  approvalStatus, uint256  propertyID, bytes32 Remark, bytes32 OwnerName) public {
+    function registerPropertiesByBuilderToRO(uint256 builderID, uint256  buyerID, uint256 flatID, string memory  approvalStatus, uint256  propertyID, string memory  Remark, string memory  OwnerName) public returns(bytes32 resp) {
     
     require(builderAddress != msg.sender,"Can't be Builder and Ro can't be same");
         
@@ -31,7 +31,11 @@ contract RealEstate_RO{
         _roDetails.Remark=Remark;
         _roDetails.OwnerName=OwnerName;
     
+    roMapping[arraylocation]=_roDetails;
+    arraylocation=arraylocation+1;
     
-        
+    
+        return ("its done with tracking iD ");
     }
 }
+
