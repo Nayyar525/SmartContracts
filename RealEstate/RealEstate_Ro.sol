@@ -1,5 +1,5 @@
 pragma solidity >=0.4.22 < 0.7.0;
-
+pragma experimental ABIEncoderV2;
 contract RealEstate_RO{
     
     struct RoDetails{
@@ -36,7 +36,7 @@ contract RealEstate_RO{
     arraylocation=arraylocation+1;
     
     
-        return ("Prperty Register");
+        return ("Prperty Register Successfully");
     }
     
     
@@ -45,12 +45,15 @@ contract RealEstate_RO{
         return (roMapping[indexnu].builderID,roMapping[indexnu].buyerID,roMapping[indexnu].flatID,roMapping[indexnu].approvalStatus,roMapping[indexnu].propertyID,roMapping[indexnu].Remark,roMapping[indexnu].OwnerName);
     }
     
-    function getAllRegisterProperty() view public returns (bytes32[] memory )
+    event checkAll(uint256 x);
+    
+    function getAllRegisterProperty() view public returns (RoDetails[] memory )
     {
-                uint8 x = 0;
-bytes32[] memory datanew = new bytes32[]();
-        while(x < roMapping.length)
+                uint256 x = 0;
+        RoDetails[] memory datanew ;
+        while(x < arraylocation)
         {
+           //emit checkAll(x);
             datanew[x].builderID = roMapping[x].builderID;
              datanew[x].buyerID = roMapping[x].buyerID;
              datanew[x].flatID = roMapping[x].flatID;
