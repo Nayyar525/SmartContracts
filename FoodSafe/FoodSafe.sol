@@ -1,5 +1,4 @@
-
-pragma solidity ^0.4.6;
+pragma solidity >=0.4.22 < 0.7.0;
 
 contract FoodSafe
 {
@@ -15,7 +14,7 @@ contract FoodSafe
     mapping(uint => Location) Trail;
     uint8 TrailCount=0;
 
-    function AddNewLocation(uint LocationID,string Name,string Secret) public
+    function AddNewLocation(uint LocationID,string memory Name,string memory Secret) public
     {
         Location memory NewLocation;
         NewLocation.Name = Name;
@@ -36,7 +35,7 @@ contract FoodSafe
         return TrailCount;
     } 
 
-    function GetLocation(uint8 TrailNo) view public returns (string,uint,uint,uint,string)
+    function GetLocation(uint8 TrailNo) view public returns (string memory ,uint,uint,uint,string memory)
     {
         return (Trail[TrailNo].Name, Trail[TrailNo].LocationID,Trail[TrailNo].PreviousLocationID,Trail[TrailNo].TimeStamp ,Trail[TrailNo].Secret );
     }
