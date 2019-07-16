@@ -10,14 +10,15 @@ contract TicTacToe {
     address player2;
     mapping(address => uint)  tokenMapping;
     uint start = 0;
+    uint nunmberOfRounds;
+    uint betAmount;
     
     
-            constructor( address _player2)  public {
+            constructor()  public {
         player1 = msg.sender;
-        player2= _player2;
     }
     
-    function purcaseToken() public  payable  returns(uint)    {
+    function purcaseToken( address _player) public  payable  returns(uint)    {
         require(msg.value > 0.01 ether,"value should be greater 0.01 ether");
         
         uint tempToken = msg.value / tokenvalue;
@@ -35,25 +36,53 @@ contract TicTacToe {
          return tokenMapping[msg.sender];
     }
     
-    // function joinGame() public {
-    //     require(player1!=msg.sender, "player1 and player2 can't be same");
-    //     player2 = msg.sender;
-    // }
     
-    function resetGame() public view returns(string memory)
+    
+    function joinGame(address _player) public {
+        require(player1!=msg.sender, "player1 and player2 can't be same");
+        checkToken(msg.sender,betAmount*nunmberOfRounds);
+        player2 = msg.sender;
+    }
+    
+    function resetGame() public  returns(string memory)
     {
         require(msg.sender != player1,"Only who created the role have access to reset the game");
-        //player2 = 0x0;
+        player2 = address(0);
+        winningAmount=0;
+        nunmberOfRounds=0;
         
     }
     
-    function nextTurn(uint place , uint8 betAmount ) public  returns (string memory){
+
+
+
+    function setGame(uint bet, uint NOR ) public returns(string memory)
+    {
+        nunmberOfRounds= NOR;
+        if(nunmberOfRounds>0) return "rounds are still pending from last game. Please reset the game for fresh start";
+        betAmount = bet* NOR;
+        checkToken(player1,betAmount);
+    }
+    
+    function nextRound()  private 
+    {
+        
+        nunmberOfRounds = nunmberOfRounds-1;
+        if(nunmberOfRounds==0) closechannel(msg.sender);
+        board = new uint[](9);
+    }
+    
+    function nextTurn(uint place ) public  returns (string memory){
         
          uint winner = checkWinner();
         if(winner == 1){
+            nextRound();
+          
             return "The game is over and the Winner is X";
         }
-        if (winner == 2){
+        if (winner == 2){ 
+            nextRound();
+           
             return "The game is over and the Winner is O";
         }
         // correct users is on turn
@@ -68,18 +97,18 @@ contract TicTacToe {
         
         // Is not already set
         if(board[place] != 0) return "already occupied";
-        checkToken(msg.sender,betAmount);
-        
+
         board[place] = start+1;
         start = 1- start;
-        tokenMapping[msg.sender]= tokenMapping[msg.sender]-betAmount;
-        winningAmount = winningAmount + betAmount;
+        // tokenMapping[msg.sender]= tokenMapping[msg.sender]-betAmount;
+        // winningAmount = winningAmount + betAmount;
         return "OK";   
     }
     
-function closechannel() public payable
+function closechannel(address payable win) private 
 {
-    
+   uint  amount= winningAmount *tokenvalue;
+    win.transfer(amount);
 }
 
     
@@ -87,24 +116,29 @@ function closechannel() public payable
  // 0 1 2
 // 3 4 5
 // 6 7 8
-function checkWinner() public returns (uint){
+function checkWinner() private returns (uint){
     for(uint i =0; i < 8;i++){
         uint[] memory b = tests[i];
-        if(board[b[0]] != 0 && board[b[0]] == board[b[1]] && board[b[0]] == board[b[2]]) return board[b[0]];
+        if(board[b[0]] != 0 && board[b[0]] == board[b[1]] && board[b[0]] == board[b[2]]) 
+       
+            return board[b[0]];
+        
+        
+        
+        
     }
-
-
-    
     return 0;
  }
  
  
- function checkToken(address player , uint betAmount) private 
+ function checkToken(address player , uint betprice) private 
  {
-  require(tokenMapping[player] > betAmount," All token are used please purcaseToken");   
+  require(tokenMapping[player] > betAmount," All token are used please purcaseToken"); 
+  tokenMapping[player]= tokenMapping[player] - betprice;
+  winningAmount =winningAmount+betprice;
  }
     
-    function current() public  returns(string memory, string memory) {
+    function gameStatus() public  returns(string memory, string memory) {
         string memory text = "No winner yet";
         uint winner = checkWinner();
         if(winner == 1){
